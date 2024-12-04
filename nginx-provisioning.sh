@@ -29,14 +29,14 @@ ssh_remote () {
 
 
 echo "============================================"
-echo "=[Virtual Host Creator Tool - For Smartbid]="
+echo "=[Virtual Host Creator Tool - For JerPra]="
 echo "============================================"
 echo -n "Please Input the Subdomain to Create: " 
 read SUBDOMAIN
 
 if [[ ! -z "$SUBDOMAIN" ]]; then
-	_ROOTDIR="/var/www/prod/$SUBDOMAIN.smartbid.co.id/public_html"
-	_CONFIGFILE="/etc/nginx/sites-available/$SUBDOMAIN.smarbid.co.id"
+	_ROOTDIR="/var/www/prod/$SUBDOMAIN.jerpra.co.id/public_html"
+	_CONFIGFILE="/etc/nginx/sites-available/$SUBDOMAIN.jepra.co.id"
 else
 	echo -e "Subdomain required $STATUS_FAIL"
 	exit 1
@@ -44,7 +44,7 @@ fi
 
 if ssh_remote "[[ ! -d $_ROOTDIR ]]"; then 
 	ssh_remote "mkdir -p $_ROOTDIR" 
-	if ssh_remote "[[ $? -eq 0 ]]"; then	
+	if ssh_remote "[[ $? -eq 0 ]]"; then
 		echo -e "The Directory $_ROOTDIR Has been Created $STATUS_OK"
 		_HTMLMOCKUP="<h1>$SUBDOMAIN Site: Please Insert Web Code </h1><text> This Web Page Generate with Server Block Generator Tool by JePra <text>"
 		ssh_remote "echo '$_HTMLMOCKUP' > $_ROOTDIR/index.html"
@@ -63,21 +63,21 @@ _UPSTREAM_CONF=$(sed "s/SUBDOMAIN/$SUBDOMAIN/g" ~/upstream.template)
 success_or_not "Success to Replace the Template with current Subdomain" "Failed to Replace the Template with current Subdomain"
 
 if ssh_remote "[[ ! -f $_CONFIGFILE ]]"; then
-	ssh_remote "echo '$_UPSTREAM_CONF' > /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id"
-	#echo "$_UPSTREAM_CONF" | ssh root@gerda.onlyirul.com tee /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id
-	success_or_not "Success to Create Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id" "Failed to Create Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id"
+	ssh_remote "echo '$_UPSTREAM_CONF' > /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id"
+	#echo "$_UPSTREAM_CONF" | ssh root@gerda.onlyirul.com tee /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id
+	success_or_not "Success to Create Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id" "Failed to Create Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id"
 else
 	echo "The Config File Already Exist $STATUS_FAIL"
 	exit 1
 fi
 	
-ssh_remote "ln -s /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id /etc/nginx/sites-enabled/" 
+ssh_remote "ln -s /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id /etc/nginx/sites-enabled/" 
 
-success_or_not "Success to Symlink Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id" "Failed to Symlink Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.smartbid.co.id"
+success_or_not "Success to Symlink Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id" "Failed to Symlink Virtual Host Config in /etc/nginx/sites-available/$SUBDOMAIN.jerpra.co.id"
 
 ssh_remote "nginx -tq"
-success_or_not "No Error Found in $SUBDOMAIN.smartbid.co.id Configuration File" "There is Error Found in $SUBDOMAIN.smartbid.co.id Configuration File"
+success_or_not "No Error Found in $SUBDOMAIN.jerpra.co.id Configuration File" "There is Error Found in $SUBDOMAIN.jerpra.co.id Configuration File"
 
 ssh_remote "nginx -s reload" 
 ssh_remote "nginx -Tq | grep -q $SUBDOMAIN"
-success_or_not "The $SUBDOMAIN.smartbid.co.id Configuration Has Been Loaded" "The $SUBDOMAIN.smartbid.co.id Configuration Failed to Loaded"
+success_or_not "The $SUBDOMAIN.jerpra.co.id Configuration Has Been Loaded" "The $SUBDOMAIN.jerpra.co.id Configuration Failed to Loaded"
